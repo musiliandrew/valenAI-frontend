@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Playfair+Display:ital,wght@1,700&family=Montserrat:wght@300;400&display=swap');
+
+.container {
+    --crimson: #8B0000;
+    --rose: #C0392B;
+    --blush: #E8A0A0;
+    --cream: #FFF8F8;
+    --white: #FFFFFF;
+    --gold: #C9A84C;
+}
+
+.poemCardWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+.petalsContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.petal {
+    position: absolute;
+    top: -40px;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: fall linear infinite;
+    pointer-events: none;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.7;
+    }
+
+    90% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.cardWrap {
+    position: relative;
+    z-index: 10;
+    padding: 20px;
+    animation: cardIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    width: 100%;
+    max-width: 520px;
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(60px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.card {
+    background: var(--white);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 2px;
+    width: 100%;
+    padding: 60px 30px 52px;
+    position: relative;
+    box-shadow:
+        0 0 0 6px var(--crimson),
+        0 0 0 8px rgba(201, 168, 76, 0.4),
+        0 40px 80px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 640px) {
+    .card {
+        padding: 60px 56px 52px;
+    }
+}
+
+/* Corner ornaments */
+.rnCorner {
+    position: absolute;
+    color: var(--gold);
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.topRule {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    margin: 0 auto 28px;
+}
+
+.label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    color: var(--rose);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.heartIcon {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 18px;
+    animation: heartbeat 2.2s ease-in-out infinite;
+    color: var(--rose);
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    20% {
+        transform: scale(1.18);
+    }
+
+    40% {
+        transform: scale(1);
+    }
+
+    60% {
+        transform: scale(1.10);
+    }
+
+    80% {
+        transform: scale(1);
+    }
+}
+
+.poemTitle {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.9rem;
+    font-style: italic;
+    font-weight: 700;
+    color: var(--crimson);
+    text-align: center;
+    margin-bottom: 32px;
+    line-height: 1.2;
+}
+
+.divider {
+    text-align: center;
+    color: var(--blush);
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    margin-bottom: 32px;
+}
+
+.poem {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.12rem;
+    font-weight: 300;
+    color: #2a2a2a;
+    line-height: 2;
+    text-align: center;
+    max-height: 350px;
+    overflow-y: auto;
+    padding: 0 10px;
+    margin-bottom: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--blush) transparent;
+}
+
+.poem::-webkit-scrollbar {
+    width: 4px;
+}
+
+.poem::-webkit-scrollbar-thumb {
+    background: var(--blush);
+    border-radius: 10px;
+}
+
+.stanza {
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.closing {
+    margin-top: 36px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+    animation-delay: 2.4s;
+}
+
+.closingRule {
+    width: 40px;
+    height: 1px;
+    background: var(--blush);
+    margin: 0 auto 16px;
+}
+
+.closing p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--blush);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.signature {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--crimson);
+}
+
+.bottomRule {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    margin: 28px auto 0;
+}
