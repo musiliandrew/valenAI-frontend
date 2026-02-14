@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Heart, Gift, Music, Share2, Sparkles, Loader2, Frown, ArrowRight } from 'lucide-react'
+import { Heart, Gift, Music, Share2, Sparkles, Loader2, Frown, ArrowRight, Copy, Check } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -82,6 +82,7 @@ export default function ReceiverPage() {
   const [floatingHearts, setFloatingHearts] = useState<{ id: number; delay: number; duration: number; x: number }[]>([])
   const [showStatusPanel, setShowStatusPanel] = useState(true)
   const [viewAsRecipient, setViewAsRecipient] = useState(false)
+  const [bragCopied, setBragCopied] = useState(false)
 
   useEffect(() => {
     setFloatingHearts(Array.from({ length: 15 }, (_, i) => ({
@@ -237,8 +238,15 @@ export default function ReceiverPage() {
       }).catch(console.error)
     } else {
       navigator.clipboard.writeText(text)
-      alert('Viral share message copied to clipboard! Paste it on your status 💖')
+      setBragCopied(true)
+      setTimeout(() => setBragCopied(false), 2000)
     }
+  }
+
+  const handleWhatsAppBrag = () => {
+    const text = `Someone just went above and beyond for me with a personalized Valentine! 🌹 I couldn't say no! ❤️ \n\nCheck out the surprise here: ${window.location.href}\n\nMake your own at ValenAI.love #ValenAI #Valentines2026`
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`
+    window.open(whatsappUrl, '_blank')
   }
 
   const moveNoButton = () => {
@@ -477,9 +485,21 @@ export default function ReceiverPage() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <Button variant="outline" className="w-full border-rose-200 text-rose-600 gap-2 h-12 rounded-xl" onClick={handleBrag}>
+                  <Button
+                    onClick={handleWhatsAppBrag}
+                    className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold h-12 rounded-xl shadow-lg flex items-center justify-center gap-2"
+                  >
                     <Share2 className="w-5 h-5" />
-                    Brag about it!
+                    Brag on WhatsApp! 📱
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className={`w-full border-rose-200 gap-2 h-12 rounded-xl font-bold transition-all ${bragCopied ? 'text-green-600 border-green-200 bg-green-50' : 'text-rose-600'}`}
+                    onClick={handleBrag}
+                  >
+                    {bragCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                    {bragCopied ? 'Copied Link!' : 'Copy Share Link'}
                   </Button>
 
                   <Link href="/" className="inline-block text-gray-400 hover:text-rose-500 text-sm font-medium transition-colors">

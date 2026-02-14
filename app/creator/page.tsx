@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowRight, ArrowLeft, Heart, Sparkles, Music, Image as ImageIcon, Loader2, X, Search, BookOpen, Share2, Wallet } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Heart, Sparkles, Music, Image as ImageIcon, Loader2, X, Search, BookOpen, Share2, Wallet, Copy, Check } from 'lucide-react'
 import Link from 'next/link'
 
 // Validation schema
@@ -57,6 +57,7 @@ export default function CreatorPage() {
   const [completed, setCompleted] = useState(false)
   const [generatedSlug, setGeneratedSlug] = useState('')
   const [managementToken, setManagementToken] = useState('')
+  const [copied, setCopied] = useState(false)
 
   // AI State
   const [isGenerating, setIsGenerating] = useState(false)
@@ -229,6 +230,20 @@ export default function CreatorPage() {
     }
   }
 
+  const copyToClipboard = () => {
+    const link = `${window.location.origin}/d/${generatedSlug}`
+    navigator.clipboard.writeText(link)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const shareToWhatsApp = () => {
+    const link = `${window.location.origin}/d/${generatedSlug}`
+    const text = `I've created a special Valentine surprise for you! ❤️ View it here: ${link}`
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`
+    window.open(whatsappUrl, '_blank')
+  }
+
   const handlePreview = () => {
     window.open(`/d/${generatedSlug}`, '_blank')
   }
@@ -378,23 +393,33 @@ export default function CreatorPage() {
                 <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
                   <div className="bg-green-50 border-2 border-green-100 rounded-2xl p-4 text-left">
                     <p className="text-[10px] text-green-600 font-bold uppercase tracking-widest mb-2 text-center">Your Live Share Link</p>
-                    <div className="flex items-center gap-2 bg-white rounded-xl p-3 border border-green-200">
-                      <p className="text-sm font-mono flex-1 truncate text-green-700">
+                    <div className="flex items-center gap-2 bg-white rounded-xl p-3 border border-green-200 shadow-sm">
+                      <p className="text-sm font-mono flex-1 truncate text-green-700 font-bold">
                         {typeof window !== 'undefined' ? window.location.origin : ''}/d/{generatedSlug}
                       </p>
-                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-green-600">
-                        <Share2 className="w-4 h-4" />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={copyToClipboard}
+                        className={`h-9 px-3 ${copied ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-rose-600'}`}
+                      >
+                        {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                        <span className="text-xs font-bold">{copied ? 'Copied!' : 'Copy'}</span>
                       </Button>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-3">
-                    <Button className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold h-12 rounded-xl text-lg shadow-lg">
-                      Share to WhatsApp 📱
+                    <Button
+                      onClick={shareToWhatsApp}
+                      className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold h-14 rounded-2xl text-lg shadow-lg flex items-center justify-center gap-3 transition-transform active:scale-95"
+                    >
+                      <Share2 className="w-5 h-5" />
+                      Send via WhatsApp 📱
                     </Button>
-                    <Button asChild variant="outline" className="h-12 rounded-xl border-rose-200 text-rose-600 font-bold">
+                    <Button asChild variant="outline" className="h-12 rounded-xl border-rose-100 text-rose-500 hover:text-rose-600 font-bold bg-white/50">
                       <Link href={`/manage/${managementToken}`}>
-                        Go to Dashboard 📊
+                        Live Tracker & Stats 📊
                       </Link>
                     </Button>
                   </div>
