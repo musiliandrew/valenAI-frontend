@@ -58,6 +58,7 @@ export default function CreatorPage() {
   const [generatedSlug, setGeneratedSlug] = useState('')
   const [managementToken, setManagementToken] = useState('')
   const [copied, setCopied] = useState(false)
+  const [copiedPhone, setCopiedPhone] = useState(false)
 
   // AI State
   const [isGenerating, setIsGenerating] = useState(false)
@@ -244,6 +245,18 @@ export default function CreatorPage() {
     window.open(whatsappUrl, '_blank')
   }
 
+  const copyPhone = () => {
+    navigator.clipboard.writeText('0759313238')
+    setCopiedPhone(true)
+    setTimeout(() => setCopiedPhone(false), 2000)
+  }
+
+  const contactSupport = () => {
+    const text = `Hi Andrew, I'm having an issue with my ValenAI payment for Valentine ${generatedSlug || ''}.`
+    const whatsappUrl = `https://wa.me/254759313238?text=${encodeURIComponent(text)}`
+    window.open(whatsappUrl, '_blank')
+  }
+
   const handlePreview = () => {
     window.open(`/d/${generatedSlug}`, '_blank')
   }
@@ -361,19 +374,31 @@ export default function CreatorPage() {
                     <div className="text-sm text-gray-700">
                       <p className="font-bold text-[10px] uppercase text-gray-400 mb-1">Payment Instructions:</p>
                       <p>1. Go to M-Pesa &gt; Send Money</p>
-                      <p>2. Enter Number: <strong>0759313238</strong></p>
-                      <p>3. Pay <strong>KES {price}</strong></p>
-                      <p>4. Paste the <strong>MPESA Code</strong> below</p>
+                      <div className="flex items-center justify-between bg-white rounded-xl p-2 my-2 border border-rose-100">
+                        <p className="text-sm">2. Number: <strong>0759313238</strong></p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={copyPhone}
+                          className={`h-7 px-2 ${copiedPhone ? 'text-green-600 bg-green-50' : 'text-rose-500 hover:bg-rose-50'}`}
+                        >
+                          {copiedPhone ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                          <span className="text-[10px]">{copiedPhone ? 'Copied' : 'Copy'}</span>
+                        </Button>
+                      </div>
+                      <p>3. Recipient: <strong>ANDREW MUSILI</strong></p>
+                      <p>4. Pay <strong>KES {price}</strong></p>
+                      <p className="mt-2">5. Paste the <strong>Full M-Pesa Message</strong> below</p>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="mpesaCode" className="text-[10px] uppercase font-bold text-rose-800">Transaction Code (e.g. SBN8SDF92)</Label>
-                      <Input
+                      <Label htmlFor="mpesaCode" className="text-[10px] uppercase font-bold text-rose-800">M-Pesa Confirmation Message</Label>
+                      <Textarea
                         id="mpesaCode"
-                        placeholder="Paste M-Pesa Code here..."
+                        placeholder="Paste the whole M-Pesa message here..."
                         value={mpesaCode}
-                        onChange={(e) => setMpesaCode(e.target.value.toUpperCase())}
-                        className="bg-white border-rose-200 focus:border-rose-400 h-10 font-mono"
+                        onChange={(e) => setMpesaCode(e.target.value)}
+                        className="bg-white border-rose-200 focus:border-rose-400 min-h-[100px] text-xs font-mono"
                       />
                     </div>
                   </div>
@@ -381,12 +406,17 @@ export default function CreatorPage() {
                   <div className="pt-2">
                     <Button
                       onClick={handleManualPayment}
-                      disabled={isVerifying}
+                      disabled={isVerifying || !mpesaCode.trim()}
                       className="w-full bg-rose-600 hover:bg-rose-700 h-14 text-lg font-bold rounded-2xl shadow-lg shadow-rose-200 group"
                     >
                       {isVerifying ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Verify & Get Link 🚀</>}
                     </Button>
-                    <p className="text-[10px] text-gray-400 mt-4 italic">Links are activated instantly after pasting the code.</p>
+                    <button
+                      onClick={contactSupport}
+                      className="w-full text-center text-xs text-rose-400 hover:text-rose-600 font-medium mt-4 underline underline-offset-4"
+                    >
+                      Payment Issues? WhatsApp Andrew 📱
+                    </button>
                   </div>
                 </div>
               ) : (

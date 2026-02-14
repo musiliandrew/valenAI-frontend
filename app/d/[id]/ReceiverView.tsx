@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Heart, Gift, Music, Share2, Sparkles, Loader2, Frown, ArrowRight, Copy, Check } from 'lucide-react'
 import confetti from 'canvas-confetti'
@@ -83,6 +84,7 @@ export default function ReceiverPage() {
   const [showStatusPanel, setShowStatusPanel] = useState(true)
   const [viewAsRecipient, setViewAsRecipient] = useState(false)
   const [bragCopied, setBragCopied] = useState(false)
+  const [copiedPhone, setCopiedPhone] = useState(false)
 
   useEffect(() => {
     setFloatingHearts(Array.from({ length: 15 }, (_, i) => ({
@@ -256,6 +258,18 @@ export default function ReceiverPage() {
     setRunCount(prev => prev + 1)
   }
 
+  const copyPhone = () => {
+    navigator.clipboard.writeText('0759313238')
+    setCopiedPhone(true)
+    setTimeout(() => setCopiedPhone(false), 2000)
+  }
+
+  const contactSupport = () => {
+    const text = `Hi Andrew, I'm a recipient having an issue reveal payment for Valentine ${id || ''}.`
+    const whatsappUrl = `https://wa.me/254759313238?text=${encodeURIComponent(text)}`
+    window.open(whatsappUrl, '_blank')
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-rose-50 flex flex-col items-center justify-center p-4">
@@ -417,36 +431,46 @@ export default function ReceiverPage() {
                       </button>
                     ) : (
                       <div className="space-y-3 p-4 bg-rose-50 rounded-xl border border-rose-100 animate-in fade-in zoom-in-95">
-                        <div className="text-[10px] text-gray-500 text-left space-y-1 mb-2">
+                        <div className="text-[10px] text-gray-500 text-left space-y-2 mb-2">
                           <p>1. Go to M-Pesa &gt; Send Money</p>
-                          <p>2. Number: <strong>0759313238</strong></p>
-                          <p>3. Pay: <strong>KES 350</strong></p>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-2 border border-rose-100">
+                            <p className="text-sm">2. Number: <strong>0759313238</strong></p>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={copyPhone}
+                              className={`h-6 px-2 ${copiedPhone ? 'text-green-600 bg-green-50' : 'text-rose-500 hover:bg-rose-50'}`}
+                            >
+                              {copiedPhone ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                              <span className="text-[10px]">{copiedPhone ? 'Copied' : 'Copy'}</span>
+                            </Button>
+                          </div>
+                          <p>3. Recipient: <strong>ANDREW MUSILI</strong></p>
+                          <p>4. Pay: <strong>KES 350</strong></p>
                         </div>
-                        <Label htmlFor="rvCode" className="text-[10px] uppercase font-bold text-rose-500 text-left block">Confirmation Code</Label>
-                        <Input
+                        <Label htmlFor="rvCode" className="text-[10px] uppercase font-bold text-rose-500 text-left block">Paste M-Pesa Message</Label>
+                        <Textarea
                           id="rvCode"
-                          placeholder="SBN8SDF92"
+                          placeholder="Paste the message here..."
                           value={manualCode}
-                          onChange={(e) => setManualCode(e.target.value.toUpperCase())}
-                          className="bg-white border-rose-200 h-10 text-center font-mono"
+                          onChange={(e) => setManualCode(e.target.value)}
+                          className="bg-white border-rose-200 min-h-[80px] text-[10px] font-mono leading-tight"
                         />
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-2">
                           <Button
                             onClick={handleManualReveal}
-                            disabled={isUnlocking}
+                            disabled={isUnlocking || !manualCode.trim()}
                             size="sm"
-                            className="flex-1 bg-rose-600 hover:bg-rose-700 font-bold text-[10px]"
+                            className="bg-rose-600 hover:bg-rose-700 font-bold text-[10px] h-9"
                           >
-                            {isUnlocking ? <Loader2 className="w-3 h-3 animate-spin" /> : "Verify Code"}
+                            {isUnlocking ? <Loader2 className="w-3 h-3 animate-spin" /> : "Verify Payment"}
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowMpesaInput(false)}
-                            className="text-[10px] text-gray-400"
+                          <button
+                            onClick={contactSupport}
+                            className="text-[9px] text-rose-400 hover:text-rose-600 font-bold uppercase underline"
                           >
-                            Cancel
-                          </Button>
+                            Need help? WhatsApp Support
+                          </button>
                         </div>
                       </div>
                     )}
