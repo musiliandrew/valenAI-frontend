@@ -85,6 +85,8 @@ export default function ReceiverPage() {
   const [viewAsRecipient, setViewAsRecipient] = useState(false)
   const [bragCopied, setBragCopied] = useState(false)
   const [copiedPhone, setCopiedPhone] = useState(false)
+  const [copiedEmail, setCopiedEmail] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'paypal'>('mpesa')
 
   useEffect(() => {
     setFloatingHearts(Array.from({ length: 15 }, (_, i) => ({
@@ -270,6 +272,12 @@ export default function ReceiverPage() {
     window.open(whatsappUrl, '_blank')
   }
 
+  const copyEmail = () => {
+    navigator.clipboard.writeText('musiliofficialandrew@gmail.com')
+    setCopiedEmail(true)
+    setTimeout(() => setCopiedEmail(false), 2000)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-rose-50 flex flex-col items-center justify-center p-4">
@@ -431,43 +439,88 @@ export default function ReceiverPage() {
                       </button>
                     ) : (
                       <div className="space-y-3 p-4 bg-rose-50 rounded-xl border border-rose-100 animate-in fade-in zoom-in-95">
-                        <div className="text-[10px] text-gray-500 text-left space-y-2 mb-2">
-                          <p>1. Go to M-Pesa &gt; Send Money</p>
-                          <div className="flex items-center justify-between bg-white rounded-lg p-2 border border-rose-100">
-                            <p className="text-sm">2. Number: <strong>0759313238</strong></p>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={copyPhone}
-                              className={`h-6 px-2 ${copiedPhone ? 'text-green-600 bg-green-50' : 'text-rose-500 hover:bg-rose-50'}`}
-                            >
-                              {copiedPhone ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
-                              <span className="text-[10px]">{copiedPhone ? 'Copied' : 'Copy'}</span>
-                            </Button>
-                          </div>
-                          <p>3. Recipient: <strong>ANDREW MUSILI</strong></p>
-                          <p>4. Pay: <strong>KES 350</strong></p>
+                        {/* Payment Method Toggle */}
+                        <div className="flex bg-rose-100/50 p-1 rounded-xl border border-rose-100 mb-2">
+                          <button
+                            onClick={() => setPaymentMethod('mpesa')}
+                            className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-bold transition-all ${paymentMethod === 'mpesa' ? 'bg-rose-600 text-white shadow-sm' : 'text-rose-600 hover:bg-rose-50'}`}
+                          >
+                            M-Pesa
+                          </button>
+                          <button
+                            onClick={() => setPaymentMethod('paypal')}
+                            className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-bold transition-all ${paymentMethod === 'paypal' ? 'bg-[#0070ba] text-white shadow-sm' : 'text-[#0070ba] hover:bg-blue-50'}`}
+                          >
+                            PayPal
+                          </button>
                         </div>
-                        <Label htmlFor="rvCode" className="text-[10px] uppercase font-bold text-rose-500 text-left block">Paste M-Pesa Message</Label>
-                        <Textarea
-                          id="rvCode"
-                          placeholder="Paste the message here..."
-                          value={manualCode}
-                          onChange={(e) => setManualCode(e.target.value)}
-                          className="bg-white border-rose-200 min-h-[80px] text-[10px] font-mono leading-tight"
-                        />
-                        <div className="flex flex-col gap-2">
+
+                        {paymentMethod === 'mpesa' ? (
+                          <div className="space-y-3 animate-in fade-in duration-300">
+                            <div className="text-[10px] text-gray-500 text-left space-y-2">
+                              <p>1. Go to M-Pesa &gt; Send Money</p>
+                              <div className="flex items-center justify-between bg-white rounded-lg p-2 border border-rose-100 shadow-sm">
+                                <p className="text-sm">2. Number: <strong>0759313238</strong></p>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={copyPhone}
+                                  className={`h-6 px-2 ${copiedPhone ? 'text-green-600 bg-green-50' : 'text-rose-500 hover:bg-rose-50'}`}
+                                >
+                                  {copiedPhone ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                                </Button>
+                              </div>
+                              <p>3. Recipient: <strong>ANDREW MUSILI</strong></p>
+                              <p>4. Pay: <strong>KES 350</strong></p>
+                            </div>
+                            <Label htmlFor="rvCode" className="text-[10px] uppercase font-bold text-rose-500 text-left block">Paste M-Pesa Message</Label>
+                            <Textarea
+                              id="rvCode"
+                              placeholder="Paste the message here..."
+                              value={manualCode}
+                              onChange={(e) => setManualCode(e.target.value)}
+                              className="bg-white border-rose-200 min-h-[80px] text-[10px] font-mono leading-tight rounded-xl shadow-inner"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-3 animate-in fade-in duration-300">
+                            <div className="text-[10px] text-gray-500 text-left space-y-2">
+                              <p>1. Send <strong>USD $3</strong> to:</p>
+                              <div className="flex items-center justify-between bg-white rounded-lg p-2 border border-blue-100 shadow-sm">
+                                <p className="text-[9px] font-bold truncate pr-1">musiliofficialandrew@gmail.com</p>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={copyEmail}
+                                  className={`h-6 px-2 ${copiedEmail ? 'text-green-600 bg-green-50' : 'text-blue-500 hover:bg-blue-50'}`}
+                                >
+                                  {copiedEmail ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                                </Button>
+                              </div>
+                              <p>2. Paste <strong>Transaction ID / Email</strong> below</p>
+                            </div>
+                            <Input
+                              id="rvPaypal"
+                              placeholder="Transaction ID or Email"
+                              value={manualCode}
+                              onChange={(e) => setManualCode(e.target.value)}
+                              className="bg-white border-blue-200 h-9 text-[10px] font-mono rounded-xl shadow-inner"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex flex-col gap-2 pt-1 border-t border-rose-100/50 mt-2">
                           <Button
                             onClick={handleManualReveal}
                             disabled={isUnlocking || !manualCode.trim()}
                             size="sm"
-                            className="bg-rose-600 hover:bg-rose-700 font-bold text-[10px] h-9"
+                            className={`font-bold text-[10px] h-9 transition-all active:scale-95 ${paymentMethod === 'paypal' ? 'bg-[#0070ba] hover:bg-[#005ea6]' : 'bg-rose-600 hover:bg-rose-700'}`}
                           >
                             {isUnlocking ? <Loader2 className="w-3 h-3 animate-spin" /> : "Verify Payment"}
                           </Button>
                           <button
                             onClick={contactSupport}
-                            className="text-[9px] text-rose-400 hover:text-rose-600 font-bold uppercase underline"
+                            className="text-[9px] text-gray-400 hover:text-rose-600 font-bold uppercase underline transition-colors"
                           >
                             Need help? WhatsApp Support
                           </button>
@@ -635,6 +688,6 @@ export default function ReceiverPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </div >
   )
 }

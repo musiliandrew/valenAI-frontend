@@ -59,6 +59,8 @@ export default function CreatorPage() {
   const [managementToken, setManagementToken] = useState('')
   const [copied, setCopied] = useState(false)
   const [copiedPhone, setCopiedPhone] = useState(false)
+  const [copiedEmail, setCopiedEmail] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'paypal'>('mpesa')
 
   // AI State
   const [isGenerating, setIsGenerating] = useState(false)
@@ -257,6 +259,19 @@ export default function CreatorPage() {
     window.open(whatsappUrl, '_blank')
   }
 
+  const copyEmail = () => {
+    navigator.clipboard.writeText('musiliofficialandrew@gmail.com')
+    setCopiedEmail(true)
+    setTimeout(() => setCopiedEmail(false), 2000)
+  }
+
+  const getDollarPrice = () => {
+    const p = getPrice()
+    if (p === 500) return 5
+    if (p === 350) return 3
+    return 2
+  }
+
   const handlePreview = () => {
     window.open(`/d/${generatedSlug}`, '_blank')
   }
@@ -360,62 +375,119 @@ export default function CreatorPage() {
             <CardContent className="space-y-6 pb-8">
               {!isPaid ? (
                 <div className="space-y-6">
-                  <div className="bg-rose-50 border-2 border-rose-100 rounded-2xl p-6 text-left space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-bold text-rose-900 flex items-center gap-2">
-                        <Wallet className="w-4 h-4" />
-                        Pay via M-Pesa
-                      </h3>
-                      <span className="bg-rose-600 text-white text-[10px] font-black px-2 py-1 rounded-full px-3">
-                        KES {price}
-                      </span>
-                    </div>
-
-                    <div className="text-sm text-gray-700">
-                      <p className="font-bold text-[10px] uppercase text-gray-400 mb-1">Payment Instructions:</p>
-                      <p>1. Go to M-Pesa &gt; Send Money</p>
-                      <div className="flex items-center justify-between bg-white rounded-xl p-2 my-2 border border-rose-100">
-                        <p className="text-sm">2. Number: <strong>0759313238</strong></p>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={copyPhone}
-                          className={`h-7 px-2 ${copiedPhone ? 'text-green-600 bg-green-50' : 'text-rose-500 hover:bg-rose-50'}`}
-                        >
-                          {copiedPhone ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
-                          <span className="text-[10px]">{copiedPhone ? 'Copied' : 'Copy'}</span>
-                        </Button>
-                      </div>
-                      <p>3. Recipient: <strong>ANDREW MUSILI</strong></p>
-                      <p>4. Pay <strong>KES {price}</strong></p>
-                      <p className="mt-2">5. Paste the <strong>Full M-Pesa Message</strong> below</p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="mpesaCode" className="text-[10px] uppercase font-bold text-rose-800">M-Pesa Confirmation Message</Label>
-                      <Textarea
-                        id="mpesaCode"
-                        placeholder="Paste the whole M-Pesa message here..."
-                        value={mpesaCode}
-                        onChange={(e) => setMpesaCode(e.target.value)}
-                        className="bg-white border-rose-200 focus:border-rose-400 min-h-[100px] text-xs font-mono"
-                      />
-                    </div>
+                  {/* Payment Method Toggle */}
+                  <div className="flex bg-rose-100/50 p-1 rounded-2xl border border-rose-100">
+                    <button
+                      onClick={() => setPaymentMethod('mpesa')}
+                      className={`flex-1 py-2 px-4 rounded-xl text-xs font-bold transition-all ${paymentMethod === 'mpesa' ? 'bg-rose-600 text-white shadow-sm' : 'text-rose-600 hover:bg-rose-50'}`}
+                    >
+                      M-Pesa (Kenya)
+                    </button>
+                    <button
+                      onClick={() => setPaymentMethod('paypal')}
+                      className={`flex-1 py-2 px-4 rounded-xl text-xs font-bold transition-all ${paymentMethod === 'paypal' ? 'bg-[#0070ba] text-white shadow-sm' : 'text-[#0070ba] hover:bg-blue-50'}`}
+                    >
+                      PayPal (International)
+                    </button>
                   </div>
+
+                  {paymentMethod === 'mpesa' ? (
+                    <div className="bg-rose-50 border-2 border-rose-100 rounded-2xl p-6 text-left space-y-4 animate-in fade-in duration-300">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-bold text-rose-900 flex items-center gap-2 text-sm">
+                          <Wallet className="w-4 h-4 text-rose-600" />
+                          Pay via M-Pesa
+                        </h3>
+                        <span className="bg-rose-600 text-white text-[10px] font-black px-3 py-1 rounded-full">
+                          KES {price}
+                        </span>
+                      </div>
+
+                      <div className="text-sm text-gray-700">
+                        <p className="font-bold text-[10px] uppercase text-gray-400 mb-1">Payment Instructions:</p>
+                        <p>1. Go to M-Pesa &gt; Send Money</p>
+                        <div className="flex items-center justify-between bg-white rounded-xl p-2 my-2 border border-rose-100 shadow-sm">
+                          <p className="text-xs">2. Number: <strong>0759313238</strong></p>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={copyPhone}
+                            className={`h-7 px-2 ${copiedPhone ? 'text-green-600 bg-green-50' : 'text-rose-500 hover:bg-rose-50'}`}
+                          >
+                            {copiedPhone ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                            <span className="text-[10px]">{copiedPhone ? 'Copied' : 'Copy'}</span>
+                          </Button>
+                        </div>
+                        <p>3. Recipient: <strong>ANDREW MUSILI</strong></p>
+                        <p>4. Pay <strong>KES {price}</strong></p>
+                        <p className="mt-2 text-xs">5. Paste the <strong>Full M-Pesa Message</strong> below</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Textarea
+                          id="mpesaCode"
+                          placeholder="Paste the whole M-Pesa confirmation here..."
+                          value={mpesaCode}
+                          onChange={(e) => setMpesaCode(e.target.value)}
+                          className="bg-white border-rose-200 focus:border-rose-400 min-h-[100px] text-xs font-mono rounded-xl shadow-inner italic"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-blue-50 border-2 border-blue-100 rounded-2xl p-6 text-left space-y-4 animate-in fade-in duration-300">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-bold text-blue-900 flex items-center gap-2 text-sm">
+                          <span className="text-xl">💳</span>
+                          Pay via PayPal
+                        </h3>
+                        <span className="bg-[#0070ba] text-white text-[10px] font-black px-3 py-1 rounded-full">
+                          USD ${getDollarPrice()}
+                        </span>
+                      </div>
+
+                      <div className="text-sm text-gray-700">
+                        <p className="font-bold text-[10px] uppercase text-gray-400 mb-1">Instructions:</p>
+                        <p>1. Send <strong>USD ${getDollarPrice()}</strong> to:</p>
+                        <div className="flex items-center justify-between bg-white rounded-xl p-2 my-2 border border-blue-100 shadow-sm">
+                          <p className="text-[10px] font-bold truncate pr-2">musiliofficialandrew@gmail.com</p>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={copyEmail}
+                            className={`h-7 px-2 ${copiedEmail ? 'text-green-600 bg-green-50' : 'text-blue-500 hover:bg-blue-50'}`}
+                          >
+                            {copiedEmail ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                            <span className="text-[10px]">{copiedEmail ? 'Copy' : 'Copy'}</span>
+                          </Button>
+                        </div>
+                        <p className="text-xs">2. Paste <strong>Transaction ID / Email</strong> below</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Input
+                          id="paypalId"
+                          placeholder="Transaction ID / Your Email"
+                          value={mpesaCode}
+                          onChange={(e) => setMpesaCode(e.target.value)}
+                          className="bg-white border-blue-200 focus:border-blue-400 h-11 text-sm rounded-xl shadow-inner font-mono"
+                        />
+                      </div>
+                    </div>
+                  )}
 
                   <div className="pt-2">
                     <Button
                       onClick={handleManualPayment}
                       disabled={isVerifying || !mpesaCode.trim()}
-                      className="w-full bg-rose-600 hover:bg-rose-700 h-14 text-lg font-bold rounded-2xl shadow-lg shadow-rose-200 group"
+                      className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg transition-all active:scale-95 ${paymentMethod === 'paypal' ? 'bg-[#0070ba] hover:bg-[#005ea6] shadow-blue-100' : 'bg-rose-600 hover:bg-rose-700 shadow-rose-200'}`}
                     >
-                      {isVerifying ? <Loader2 className="w-6 h-6 animate-spin" /> : <>Verify & Get Link 🚀</>}
+                      {isVerifying ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : <>Verify & Get Link 🚀</>}
                     </Button>
                     <button
                       onClick={contactSupport}
-                      className="w-full text-center text-xs text-rose-400 hover:text-rose-600 font-medium mt-4 underline underline-offset-4"
+                      className="w-full text-center text-[10px] text-gray-400 hover:text-rose-500 font-bold uppercase tracking-widest mt-6 transition-colors"
                     >
-                      Payment Issues? WhatsApp Andrew 📱
+                      Payment help? WhatsApp Andrew 📱
                     </button>
                   </div>
                 </div>
